@@ -1,0 +1,34 @@
+# Render Blueprint for the StashIt API.
+# In Render: New > Blueprint > pick this repo. Then fill in the secret values it asks for.
+services:
+  - type: web
+    name: stashit-api
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: TRUST_PROXY
+        value: "1"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGO_URL
+        sync: false # MongoDB Atlas connection string
+      - key: CORS_ORIGINS
+        sync: false # e.g. https://stashit.pages.dev
+      - key: S3_ENDPOINT
+        sync: false # https://<ACCOUNT_ID>.r2.cloudflarestorage.com
+      - key: S3_REGION
+        value: auto
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
+      - key: S3_BUCKET
+        sync: false

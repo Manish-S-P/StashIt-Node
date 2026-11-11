@@ -1,0 +1,173 @@
+@import "tailwindcss";
+
+/*
+ * Dark and quiet. Newsreader for the name and headings, Instrument Sans for everything else.
+ * Lime marks the main action on each screen; amber is used only for burn after read.
+ */
+@theme {
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: "Newsreader", ui-serif, Georgia, "Times New Roman", serif;
+
+  --color-canvas: #0a0a0a;       /* page background */
+  --color-surface: #111113;      /* panels, lists, cards */
+  --color-field: #161619;        /* inputs, icon tiles, row hover */
+  --color-line: #222226;         /* hairline borders, dividers */
+  --color-line-strong: #2e2e33;  /* input borders, dashed drop zone */
+  --color-muted: #8b8b92;        /* secondary text */
+  --color-ink-2: #c6c6cb;        /* body text */
+  --color-ink: #f2f0ed;          /* headings, primary text */
+
+  --color-primary: #f2f0ed;      /* off-white buttons, active segments */
+  --color-primary-hover: #ffffff;
+  --color-on-primary: #0a0a0a;   /* text on off-white */
+
+  --color-accent: #d4f25c;       /* lime: main action buttons only */
+  --color-accent-hover: #e2f88a;
+  --color-on-accent: #0a0a0a;
+
+  --color-amber: #f5a45d;        /* burn after read only */
+  --color-amber-soft: rgb(245 164 93 / 0.08);
+  --color-error: #f87171;        /* error messages */
+  --color-error-soft: rgb(248 113 113 / 0.08);
+  --color-ok: #4ade80;           /* "Uploaded", "Updated" */
+
+  --animate-rise: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    font-family: var(--font-sans);
+    min-height: 100dvh;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: rgb(242 240 237 / 0.2);
+  }
+}
+
+@layer components {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .field {
+    display: block;
+    width: 100%;
+    height: 48px;
+    border-radius: 10px;
+    border: 1px solid var(--color-line-strong);
+    background: var(--color-field);
+    padding: 0 16px;
+    font-size: 16px;
+    color: var(--color-ink);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field::placeholder {
+    color: #66666d;
+  }
+  .field:focus {
+    outline: none;
+    border-color: #5c5c63;
+    box-shadow: 0 0 0 4px rgb(242 240 237 / 0.06);
+  }
+  .field[aria-invalid="true"] {
+    border-color: rgb(248 113 113 / 0.6);
+  }
+  /* Plain number boxes, without the browser's spinner arrows. */
+  .field[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  .field[type="number"]::-webkit-inner-spin-button,
+  .field[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* A checkbox drawn as a toggle. Amber when on: it's the burn switch. */
+  .switch {
+    appearance: none;
+    position: relative;
+    flex-shrink: 0;
+    width: 52px;
+    height: 32px;
+    border-radius: 9999px;
+    background: var(--color-line-strong);
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .switch::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 26px;
+    height: 26px;
+    border-radius: 9999px;
+    background: var(--color-ink);
+    transition: transform 0.2s, background-color 0.2s;
+  }
+  .switch:checked {
+    background: var(--color-amber);
+  }
+  .switch:checked::after {
+    background: var(--color-canvas);
+    transform: translateX(20px);
+  }
+
+  /* Segmented control: a dark track; the chosen segment is off-white. */
+  .segmented {
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 12px;
+    border: 1px solid var(--color-line);
+    background: var(--color-canvas);
+  }
+  .segment {
+    display: grid;
+    place-items: center;
+    height: 40px;
+    border-radius: 8px;
+    font-size: 15px;
+    color: var(--color-ink-2);
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+  }
+  .segment:hover {
+    color: var(--color-ink);
+  }
+  .segment[aria-selected="true"],
+  .segment:has(:checked) {
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+  .segment:has(:focus-visible) {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
